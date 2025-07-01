@@ -1,17 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>To-Do List</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Budget Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/bc4047f7a1.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+    <header class="navbar">
+        <div class="navbar-left">
+            <h1>Budgify</h1>
+        </div>
+    </header>
+
     <div class="container">
-        <h1>To-Do List</h1>
-        <input type="text" id="taskInput" placeholder="Add a new task..." />
-        <button onclick="addTask()">Add</button>
-        <ul id="taskList"></ul>
+        <div class="sidebar scroll-area">
+            <div id="income-section" class="sidebar-section">
+                <h4>Income</h4>
+                <div class="category-list" id="income-list"></div>
+            </div>
+            <div id="expense-section" class="sidebar-section">
+                <h4>Expense</h4>
+                <div class="category-list" id="expense-list"></div>
+            </div>
+        </div>
+
+        <div class="main scroll-area">
+            <div class="header">
+                <div class="header-left">
+                    <h3>Home Wallet</h3>
+                    <small>Change default wallet</small>
+                </div>
+                <div class="header-right">
+                    <div class="balance-label">Total Balance:</div>
+                    <div id="total-balance" class="balance-amount">Rp 0</div>
+                </div>
+            </div>
+
+            <div class="filters">
+                <select class="filter-select" id="filter-date" onchange="sortTransactions()">
+                    <option value="" disabled selected hidden>Sort by Date</option>
+                    <option value="date-desc">Newest</option>
+                    <option value="date-asc">Oldest</option>
+                </select>
+
+                <select class="filter-select" id="filter-type" onchange="sortTransactions()">
+                    <option value="" disabled selected hidden>Sort by Type</option>
+                    <option value="any">Any</option>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+
+                <select class="filter-select" id="filter-category" onchange="sortTransactions()">
+                    <option value="" disabled selected hidden>Sort by Category</option>
+                    <option value="az">A → Z</option>
+                    <option value="za">Z → A</option>
+                </select>
+            </div>
+
+            <div class="transaction-empty">
+                <p>No transactions yet. <strong>Empty</strong>.</p>
+            </div>
+            <div class="transaction-list"></div>
+
+            <button class="add-btn" onclick="togglePopup()">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+
+            <div id="popup" class="popup hidden">
+                <div class="popup-content">
+                    <div class="popup-tabs">
+                        <button onclick="switchTab('income')" id="income-tab" class="active">Income</button>
+                        <button onclick="switchTab('expense')" id="expense-tab">Expense</button>
+                    </div>
+
+                    <!-- Income Form -->
+                    <div id="income-form" class="form-tab">
+                        <label>Date & Time <input type="datetime-local" name="datetime" /></label>
+                        <label>Amount
+                            <div class="amount-wrapper">
+                                <span class="prefix">Rp.</span>
+                                <input type="text" class="with-prefix" name="amount" />
+                            </div>
+                        </label>
+                        <label>Description <input type="text" name="description" /></label>
+                        <label>Category
+                            <select>
+                                <option>Allowance</option>
+                                <option>Award</option>
+                                <option>Bonus</option>
+                                <option>Dividend</option>
+                                <option>Investment</option>
+                                <option>Lottery</option>
+                                <option>Salary</option>
+                                <option>Tips</option>
+                                <option>Others</option>
+                            </select>
+                        </label>
+                        <div class="form-buttons">
+                            <button class="submit-btn" type="button">Submit</button>
+                            <button class="cancel-btn" type="button" onclick="cancelForm()">Cancel</button>
+                        </div>
+                    </div>
+
+                    <!-- Expense Form -->
+                    <div id="expense-form" class="form-tab hidden">
+                        <label>Date & Time <input type="datetime-local" name="datetime" /></label>
+                        <label>Amount
+                            <div class="amount-wrapper">
+                                <span class="prefix">Rp.</span>
+                                <input type="text" class="with-prefix" name="amount" />
+                            </div>
+                        </label>
+                        <label>Description <input type="text" name="description" /></label>
+                        <label>Category
+                            <select>
+                                <option>Bills</option>
+                                <option>Clothing</option>
+                                <option>Education</option>
+                                <option>Entertainment</option>
+                                <option>Fitness</option>
+                                <option>Food</option>
+                                <option>Gifts</option>
+                                <option>Health</option>
+                                <option>Shopping</option>
+                                <option>Travel</option>
+                                <option>Transportation</option>
+                                <option>Others</option>
+                            </select>
+                        </label>
+                        <div class="form-buttons">
+                            <button class="submit-btn" type="button">Submit</button>
+                            <button class="cancel-btn" type="button" onclick="cancelForm()">Cancel</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
+
     <script src="script.js"></script>
 </body>
+
 </html>
