@@ -32,13 +32,8 @@ function toggleAuthPopup() {
 function switchAuthTab(tab) {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
-    const loginTab = document.getElementById('login-tab');
-    const registerTab = document.getElementById('register-tab');
-
     loginForm.classList.toggle('hidden', tab !== 'login');
     registerForm.classList.toggle('hidden', tab !== 'register');
-    loginTab.classList.toggle('active', tab === 'login');
-    registerTab.classList.toggle('active', tab === 'register');
 }
 
 function setCurrentDateTime() {
@@ -284,6 +279,64 @@ function submitForm(type) {
     sortTransactions();
 }
 
+// ==== Auth: Register & Login ====
+
+function registerUser() {
+    const fullName = document.querySelector('#register-form input[name="fullname"]').value.trim();
+    const username = document.querySelector('#register-form input[name="username"]').value.trim();
+    const email = document.querySelector('#register-form input[name="email"]').value.trim();
+    const password = document.querySelector('#register-form input[name="password"]').value;
+
+    if (!fullName || !username || !email || !password) {
+        alert('Please fill all fields.');
+        return;
+    }
+
+    fetch('http://localhost:5000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ full_name: fullName, username, email, password })
+    })
+        .then(res => res.json().then(data => ({ status: res.status, body: data })))
+        .then(({ status, body }) => {
+            if (status === 201) {
+                alert('Registration successful! Please login.');
+                switchAuthTab('login');
+            } else {
+                alert(body.message || 'Registration failed.');
+            }
+        })
+        .catch(() => alert('Error registering user.'));
+}
+
+function loginUser() {
+    const email = document.querySelector('#login-form input[name="email"]').value.trim();
+    const password = document.querySelector('#login-form input[name="password"]').value;
+
+    if (!email || !password) {
+        alert('Please enter email and password.');
+        return;
+    }
+
+    fetch('http://localhost:5000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    })
+        .then(res => res.json().then(data => ({ status: res.status, body: data })))
+        .then(({ status, body }) => {
+            if (status === 200) {
+                alert(`Welcome, ${body.user.full_name}!`);
+                toggleAuthPopup();
+            } else {
+                alert(body.message || 'Login failed.');
+            }
+        })
+        .catch(() => alert('Error during login.'));
+}
+
+// ==== Init ====
+
 document.addEventListener('DOMContentLoaded', () => {
     setupAmountInput();
 
@@ -319,4 +372,10 @@ document.addEventListener('DOMContentLoaded', () => {
             form.querySelector('select').value = tx.category;
         }
     });
+
+    document.querySelector('#register-form .submit-btn')
+        .addEventListener('click', registerUser);
+
+    document.querySelector('#login-form .submit-btn')
+        .addEventListener('click', loginUser);
 });
