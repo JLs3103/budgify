@@ -23,6 +23,24 @@ function togglePopup() {
     }
 }
 
+function toggleAuthPopup() {
+    const authPopup = document.getElementById('auth-popup');
+    authPopup.classList.toggle('hidden');
+    switchAuthTab('login');
+}
+
+function switchAuthTab(tab) {
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const loginTab = document.getElementById('login-tab');
+    const registerTab = document.getElementById('register-tab');
+
+    loginForm.classList.toggle('hidden', tab !== 'login');
+    registerForm.classList.toggle('hidden', tab !== 'register');
+    loginTab.classList.toggle('active', tab === 'login');
+    registerTab.classList.toggle('active', tab === 'register');
+}
+
 function setCurrentDateTime() {
     const now = new Date();
     const offset = now.getTimezoneOffset();
@@ -274,7 +292,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#expense-form .submit-btn')
         .addEventListener('click', () => submitForm('expense'));
 
-    // Event handler for Delete & Edit icon
     document.querySelector('.transaction-list').addEventListener('click', (e) => {
         const parent = e.target.closest('.transaction');
         const index = parseInt(parent?.getAttribute('data-index'));

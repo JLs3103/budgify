@@ -57,6 +57,26 @@ body {
   color: #2f80ed;
 }
 
+.navbar-right {
+  display: flex;
+  gap: 10px;
+}
+
+.auth-btn {
+  background-color: #2f80ed;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+.auth-btn:hover {
+  background-color: #1e6fd9;
+}
+
 .container {
   display: flex;
   flex: 1;
@@ -390,4 +410,59 @@ body {
 .filter-select:focus {
   border-color: #2f80ed;
   box-shadow: 0 0 0 2px rgba(47, 128, 237, 0.2);
+}
+
+/* --- Login/Register popup --- */
+.auth-blur {
+  backdrop-filter: blur(3px);
+}
+
+.auth-content {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+/* Auth title heading */
+.auth-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #2f80ed;
+  text-align: center;
+}
+
+/* Text link under login/register form */
+.auth-switch-text {
+  margin-top: 15px;
+  font-size: 0.9rem;
+  text-align: center;
+  color: #555;
+}
+
+.auth-switch-text a {
+  color: #2f80ed;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-switch-text a:hover {
+  text-decoration: underline;
+}
+
+/* Icon wrapper on input */
+.input-icon-wrapper {
+  position: relative;
+}
+
+.input-icon-wrapper input {
+  padding-right: 35px;
+}
+
+.input-icon-wrapper i {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 1rem;
 }

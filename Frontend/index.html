@@ -15,6 +15,9 @@
         <div class="navbar-left">
             <h1>Budgify</h1>
         </div>
+        <div class="navbar-right">
+            <button class="auth-btn" onclick="toggleAuthPopup()">Login/Register</button>
+        </div>
     </header>
 
     <div class="container">
@@ -71,6 +74,7 @@
                 <i class="fa-solid fa-plus"></i>
             </button>
 
+            <!-- Popup Income/Expense -->
             <div id="popup" class="popup hidden">
                 <div class="popup-content">
                     <div class="popup-tabs">
@@ -138,9 +142,78 @@
                             <button class="cancel-btn" type="button" onclick="cancelForm()">Cancel</button>
                         </div>
                     </div>
-
                 </div>
             </div>
+
+            <!-- Popup Login/Register -->
+            <div id="auth-popup" class="popup hidden auth-blur">
+                <div class="popup-content auth-content">
+                    <!-- Login Form -->
+                    <div id="login-form" class="form-tab">
+                        <h3 class="auth-title">Login</h3>
+
+                        <label>Email
+                            <div class="input-icon-wrapper">
+                                <input type="email" name="email" />
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                        </label>
+
+                        <label>Password
+                            <div class="input-icon-wrapper">
+                                <input type="password" name="password" />
+                                <i class="fa-solid fa-lock"></i>
+                            </div>
+                        </label>
+
+                        <div class="form-buttons">
+                            <button class="submit-btn" type="button">Login</button>
+                            <button class="cancel-btn" type="button" onclick="toggleAuthPopup()">Cancel</button>
+                        </div>
+                        <p class="auth-switch-text">Don't have an account? <a href="#" onclick="switchAuthTab('register')">Register</a></p>
+                    </div>
+
+                    <!-- Register Form -->
+                    <div id="register-form" class="form-tab hidden">
+                        <h3 class="auth-title">Register</h3>
+
+                        <label>Full Name
+                            <div class="input-icon-wrapper">
+                                <input type="text" name="fullname" />
+                                <i class="fa-solid fa-address-card"></i>
+                            </div>
+                        </label>
+
+                        <label>Username
+                            <div class="input-icon-wrapper">
+                                <input type="text" name="username" />
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                        </label>
+
+                        <label>Email
+                            <div class="input-icon-wrapper">
+                                <input type="email" name="email" />
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                        </label>
+
+                        <label>Password
+                            <div class="input-icon-wrapper">
+                                <input type="password" name="password" />
+                                <i class="fa-solid fa-lock"></i>
+                            </div>
+                        </label>
+
+                        <div class="form-buttons">
+                            <button class="submit-btn" type="button">Register</button>
+                            <button class="cancel-btn" type="button" onclick="toggleAuthPopup()">Cancel</button>
+                        </div>
+                        <p class="auth-switch-text">Already have an account? <a href="#" onclick="switchAuthTab('login')">Login</a></p>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
