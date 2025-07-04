@@ -20,14 +20,25 @@ def register():
     username = data.get('username')
     email = data.get('email')
     password = data.get('password')
+    confirm_password = data.get('confirm_password')
 
     # Validasi input
-    if not all([full_name, username, email, password]):
+    if not all([full_name, username, email, password, confirm_password]):
         return jsonify({'message': 'All fields are required'}), 400
 
-    # Cek apakah email/username sudah terdaftar
-    if User.query.filter((User.email == email) | (User.username == username)).first():
-        return jsonify({'message': 'Email or username already exists'}), 409
+    if len(password) < 8:
+        return jsonify({'message': 'Password must be at least 8 characters long'}), 400
+
+    if password != confirm_password:
+        return jsonify({'message': 'Passwords do not match'}), 400
+
+    # Cek apakah username sudah terdaftar
+    if User.query.filter_by(username=username).first():
+        return jsonify({'message': 'Username already exists'}), 409
+
+    # Cek apakah email sudah terdaftar
+    if User.query.filter_by(email=email).first():
+        return jsonify({'message': 'Email already exists'}), 409
 
     # Simpan user baru
     user = User(full_name=full_name, username=username, email=email)
@@ -52,12 +63,15 @@ def login():
     if not user or not user.check_password(password):
         return jsonify({'message': 'Invalid email or password'}), 401
 
-    return jsonify({'message': 'Login successful', 'user': {
-        'id': user.id,
-        'full_name': user.full_name,
-        'username': user.username,
-        'email': user.email
-    }}), 200
+    return jsonify({
+        'message': 'Login successful',
+        'user': {
+            'id': user.id,
+            'full_name': user.full_name,
+            'username': user.username,
+            'email': user.email
+        }
+    }), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

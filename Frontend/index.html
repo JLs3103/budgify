@@ -16,7 +16,13 @@
             <h1>Budgify</h1>
         </div>
         <div class="navbar-right">
-            <button class="auth-btn" onclick="toggleAuthPopup()">Login/Register</button>
+            <!-- Greeting container (default hidden) -->
+            <div id="greeting-container" class="hidden">
+                <span id="greeting-text">Hello, User</span>
+            </div>
+
+            <!-- Login/Register button (will be replaced with Logout if logged in) -->
+            <button id="login-register-btn" class="auth-btn" onclick="toggleAuthPopup()">Login/Register</button>
         </div>
     </header>
 
@@ -170,7 +176,9 @@
                             <button class="submit-btn" type="button">Login</button>
                             <button class="cancel-btn" type="button" onclick="toggleAuthPopup()">Cancel</button>
                         </div>
-                        <p class="auth-switch-text">Don't have an account? <a href="#" onclick="switchAuthTab('register')">Register</a></p>
+                        <p class="auth-switch-text">Don't have an account?
+                            <a href="#" onclick="switchAuthTab('register')">Register</a>
+                        </p>
                     </div>
 
                     <!-- Register Form -->
@@ -205,11 +213,30 @@
                             </div>
                         </label>
 
+                        <label>Confirm Password
+                            <div class="input-icon-wrapper">
+                                <input type="password" name="confirm_password" />
+                                <i class="fa-solid fa-lock"></i>
+                            </div>
+                        </label>
+
                         <div class="form-buttons">
                             <button class="submit-btn" type="button">Register</button>
                             <button class="cancel-btn" type="button" onclick="toggleAuthPopup()">Cancel</button>
                         </div>
-                        <p class="auth-switch-text">Already have an account? <a href="#" onclick="switchAuthTab('login')">Login</a></p>
+                        <p class="auth-switch-text">Already have an account?
+                            <a href="#" onclick="switchAuthTab('login')">Login</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pop-up Login Warning -->
+            <div id="login-warning" class="popup hidden">
+                <div class="popup-content popup-warning slide-in">
+                    <p class="warning-text">Please login first to add a transaction.</p>
+                    <div class="form-buttons right-align">
+                        <button class="submit-btn" type="button" onclick="hideLoginWarning()">OK!</button>
                     </div>
                 </div>
             </div>

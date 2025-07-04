@@ -59,7 +59,8 @@ body {
 
 .navbar-right {
   display: flex;
-  gap: 10px;
+  gap: 14px;
+  align-items: center;
 }
 
 .auth-btn {
@@ -76,6 +77,25 @@ body {
 .auth-btn:hover {
   background-color: #1e6fd9;
 }
+
+.greeting-text {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Saat tombol Logout di-hover */
+.auth-btn.logout-mode:hover {
+  background-color: #eb5757;
+}
+
+/* Saat login: tombol berubah ke mode logout */
+.auth-btn.logout-mode {
+  background-color: #eb5757;
+}
+
+/* ============================ */
 
 .container {
   display: flex;
@@ -465,4 +485,76 @@ body {
   transform: translateY(-50%);
   color: #888;
   font-size: 1rem;
+}
+
+.login-warning-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 30;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: slideIn 0.3s ease forwards;
+}
+
+.login-warning-popup.hidden {
+  animation: slideOut 0.3s ease forwards;
+  pointer-events: none;
+}
+
+.login-warning-content {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  width: 320px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transform: translateY(0);
+}
+
+.login-warning-content p {
+  font-size: 1rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.login-warning-content .ok-btn {
+  background: #2f80ed;
+  color: #fff;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+
+/* Animasi popup */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
 }

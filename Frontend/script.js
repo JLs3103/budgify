@@ -14,8 +14,24 @@ let totalExpense = 0;
 let transactions = [];
 let editingIndex = null;
 
+let loginWarning = null;
+let loginWarningBtn = null;
+
+// ========== UI UTILITY ==========
+
 function togglePopup() {
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
     const popup = document.getElementById('popup');
+
+    if (!user) {
+        // Show login warning popup with animation
+        if (loginWarning) {
+            loginWarning.classList.remove('hidden');
+            loginWarning.classList.add('show');
+        }
+        return;
+    }
+
     popup.classList.toggle('hidden');
     if (!popup.classList.contains('hidden')) {
         setCurrentDateTime();
@@ -80,6 +96,8 @@ function switchTab(tab) {
     resetCategoryDefault();
 }
 
+// ========== FORMAT ==========
+
 function formatNumber(value) {
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
@@ -107,6 +125,8 @@ function cancelForm() {
     resetCategoryDefault();
     editingIndex = null;
 }
+
+// ========== SIDEBAR & BALANCE ==========
 
 function updateSidebar(type, category, amount) {
     const container = document.getElementById(`${type}-list`);
@@ -142,10 +162,11 @@ function updateBalance() {
     display.classList.toggle('negative', balance < 0);
 }
 
+// ========== TRANSAKSI ==========
+
 function renderTransactions(transList) {
     const list = document.querySelector('.transaction-list');
     const emptyMessage = document.querySelector('.transaction-empty');
-
     if (emptyMessage) emptyMessage.remove();
     list.innerHTML = '';
 
@@ -279,23 +300,34 @@ function submitForm(type) {
     sortTransactions();
 }
 
-// ==== Auth: Register & Login ====
+// ========== AUTH ==========
 
 function registerUser() {
     const fullName = document.querySelector('#register-form input[name="fullname"]').value.trim();
     const username = document.querySelector('#register-form input[name="username"]').value.trim();
     const email = document.querySelector('#register-form input[name="email"]').value.trim();
     const password = document.querySelector('#register-form input[name="password"]').value;
+    const confirmPassword = document.querySelector('#register-form input[name="confirm_password"]').value;
 
-    if (!fullName || !username || !email || !password) {
+    if (!fullName || !username || !email || !password || !confirmPassword) {
         alert('Please fill all fields.');
+        return;
+    }
+
+    if (password.length < 8) {
+        alert('Password must be at least 8 characters.');
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        alert('Passwords do not match.');
         return;
     }
 
     fetch('http://localhost:5000/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ full_name: fullName, username, email, password })
+        body: JSON.stringify({ full_name: fullName, username, email, password, confirm_password: confirmPassword })
     })
         .then(res => res.json().then(data => ({ status: res.status, body: data })))
         .then(({ status, body }) => {
@@ -326,8 +358,10 @@ function loginUser() {
         .then(res => res.json().then(data => ({ status: res.status, body: data })))
         .then(({ status, body }) => {
             if (status === 200) {
+                localStorage.setItem('loggedInUser', JSON.stringify(body.user));
                 alert(`Welcome, ${body.user.full_name}!`);
                 toggleAuthPopup();
+                updateAuthUI();
             } else {
                 alert(body.message || 'Login failed.');
             }
@@ -335,15 +369,54 @@ function loginUser() {
         .catch(() => alert('Error during login.'));
 }
 
-// ==== Init ====
+function logoutUser() {
+    localStorage.removeItem('loggedInUser');
+    updateAuthUI();
+}
+
+function updateAuthUI() {
+    const authBtn = document.getElementById('login-register-btn');
+    const greeting = document.getElementById('greeting-container');
+    const greetingText = document.getElementById('greeting-text');
+
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+
+    if (user) {
+        greeting.classList.remove('hidden');
+        greetingText.innerText = `Hello, ${user.full_name}`;
+        authBtn.innerText = 'Logout';
+        authBtn.onclick = logoutUser;
+    } else {
+        greeting.classList.add('hidden');
+        authBtn.innerText = 'Login/Register';
+        authBtn.onclick = toggleAuthPopup;
+    }
+}
+
+function hideLoginWarning() {
+    if (loginWarning) {
+        loginWarning.classList.remove('show');
+        loginWarning.classList.add('hide');
+        setTimeout(() => {
+            loginWarning.classList.add('hidden');
+            loginWarning.classList.remove('hide');
+        }, 300);
+    }
+}
+
+// ========== INIT ==========
 
 document.addEventListener('DOMContentLoaded', () => {
     setupAmountInput();
+    updateAuthUI();
 
-    document.querySelector('#income-form .submit-btn')
-        .addEventListener('click', () => submitForm('income'));
-    document.querySelector('#expense-form .submit-btn')
-        .addEventListener('click', () => submitForm('expense'));
+    loginWarning = document.getElementById('login-warning');
+    loginWarningBtn = document.getElementById('login-warning-ok');
+
+    document.querySelector('#income-form .submit-btn').addEventListener('click', () => submitForm('income'));
+    document.querySelector('#expense-form .submit-btn').addEventListener('click', () => submitForm('expense'));
+    document.querySelector('#register-form .submit-btn').addEventListener('click', registerUser);
+    document.querySelector('#login-form .submit-btn').addEventListener('click', loginUser);
 
     document.querySelector('.transaction-list').addEventListener('click', (e) => {
         const parent = e.target.closest('.transaction');
@@ -373,9 +446,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    document.querySelector('#register-form .submit-btn')
-        .addEventListener('click', registerUser);
-
-    document.querySelector('#login-form .submit-btn')
-        .addEventListener('click', loginUser);
+    if (loginWarningBtn) {
+        loginWarningBtn.addEventListener('click', () => {
+            if (loginWarning) {
+                loginWarning.classList.remove('show');
+                loginWarning.classList.add('hide');
+                setTimeout(() => {
+                    loginWarning.classList.add('hidden');
+                    loginWarning.classList.remove('hide');
+                }, 300);
+            }
+        });
+    }
 });
