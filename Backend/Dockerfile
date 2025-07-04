@@ -1,14 +1,14 @@
-# Gunakan image Python
+# base: use official slim Python image
 FROM python:3.11-slim
 
-# Set working directory
+# workdir: set working directory inside container
 WORKDIR /app
 
-# Salin semua file ke container
+# copy: copy all files into container
 COPY . .
 
-# Install dependencies
+# install: install Python dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Jalankan aplikasi
+# cmd: run app.py when container starts
 CMD ["python", "app.py"]

@@ -85,12 +85,10 @@ body {
   white-space: nowrap;
 }
 
-/* Saat tombol Logout di-hover */
 .auth-btn.logout-mode:hover {
   background-color: #eb5757;
 }
 
-/* Saat login: tombol berubah ke mode logout */
 .auth-btn.logout-mode {
   background-color: #eb5757;
 }
@@ -536,7 +534,7 @@ body {
   right: 20px;
 }
 
-/* Animasi popup */
+/* popup animation */
 @keyframes slideIn {
   from {
     opacity: 0;

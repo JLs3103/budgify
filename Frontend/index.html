@@ -4,29 +4,28 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Budget Dashboard</title>
+    <title>Smart Budget</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/bc4047f7a1.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+    <!-- section: top navbar with login & greeting -->
     <header class="navbar">
         <div class="navbar-left">
-            <h1>Budgify</h1>
+            <h1>Smart Budget</h1>
         </div>
         <div class="navbar-right">
-            <!-- Greeting container (default hidden) -->
             <div id="greeting-container" class="hidden">
                 <span id="greeting-text">Hello, User</span>
             </div>
-
-            <!-- Login/Register button (will be replaced with Logout if logged in) -->
             <button id="login-register-btn" class="auth-btn" onclick="toggleAuthPopup()">Login/Register</button>
         </div>
     </header>
 
     <div class="container">
+        <!-- sidebar: dynamic income/expense categories -->
         <div class="sidebar scroll-area">
             <div id="income-section" class="sidebar-section">
                 <h4>Income</h4>
@@ -39,6 +38,7 @@
         </div>
 
         <div class="main scroll-area">
+            <!-- balance summary -->
             <div class="header">
                 <div class="header-left">
                     <h3>Home Wallet</h3>
@@ -50,6 +50,7 @@
                 </div>
             </div>
 
+            <!-- filters: sort transactions -->
             <div class="filters">
                 <select class="filter-select" id="filter-date" onchange="sortTransactions()">
                     <option value="" disabled selected hidden>Sort by Date</option>
@@ -76,11 +77,12 @@
             </div>
             <div class="transaction-list"></div>
 
+            <!-- action: open transaction popup -->
             <button class="add-btn" onclick="togglePopup()">
                 <i class="fa-solid fa-plus"></i>
             </button>
 
-            <!-- Popup Income/Expense -->
+            <!-- popup: income & expense input form -->
             <div id="popup" class="popup hidden">
                 <div class="popup-content">
                     <div class="popup-tabs">
@@ -88,7 +90,7 @@
                         <button onclick="switchTab('expense')" id="expense-tab">Expense</button>
                     </div>
 
-                    <!-- Income Form -->
+                    <!-- form: income -->
                     <div id="income-form" class="form-tab">
                         <label>Date & Time <input type="datetime-local" name="datetime" /></label>
                         <label>Amount
@@ -117,7 +119,7 @@
                         </div>
                     </div>
 
-                    <!-- Expense Form -->
+                    <!-- form: expense -->
                     <div id="expense-form" class="form-tab hidden">
                         <label>Date & Time <input type="datetime-local" name="datetime" /></label>
                         <label>Amount
@@ -151,27 +153,24 @@
                 </div>
             </div>
 
-            <!-- Popup Login/Register -->
+            <!-- popup: auth (login & register) -->
             <div id="auth-popup" class="popup hidden auth-blur">
                 <div class="popup-content auth-content">
-                    <!-- Login Form -->
+                    <!-- form: login -->
                     <div id="login-form" class="form-tab">
                         <h3 class="auth-title">Login</h3>
-
                         <label>Email
                             <div class="input-icon-wrapper">
                                 <input type="email" name="email" />
                                 <i class="fa-solid fa-envelope"></i>
                             </div>
                         </label>
-
                         <label>Password
                             <div class="input-icon-wrapper">
                                 <input type="password" name="password" />
                                 <i class="fa-solid fa-lock"></i>
                             </div>
                         </label>
-
                         <div class="form-buttons">
                             <button class="submit-btn" type="button">Login</button>
                             <button class="cancel-btn" type="button" onclick="toggleAuthPopup()">Cancel</button>
@@ -181,45 +180,39 @@
                         </p>
                     </div>
 
-                    <!-- Register Form -->
+                    <!-- form: register -->
                     <div id="register-form" class="form-tab hidden">
                         <h3 class="auth-title">Register</h3>
-
                         <label>Full Name
                             <div class="input-icon-wrapper">
                                 <input type="text" name="fullname" />
                                 <i class="fa-solid fa-address-card"></i>
                             </div>
                         </label>
-
                         <label>Username
                             <div class="input-icon-wrapper">
                                 <input type="text" name="username" />
                                 <i class="fa-solid fa-user"></i>
                             </div>
                         </label>
-
                         <label>Email
                             <div class="input-icon-wrapper">
                                 <input type="email" name="email" />
                                 <i class="fa-solid fa-envelope"></i>
                             </div>
                         </label>
-
                         <label>Password
                             <div class="input-icon-wrapper">
                                 <input type="password" name="password" />
                                 <i class="fa-solid fa-lock"></i>
                             </div>
                         </label>
-
                         <label>Confirm Password
                             <div class="input-icon-wrapper">
                                 <input type="password" name="confirm_password" />
                                 <i class="fa-solid fa-lock"></i>
                             </div>
                         </label>
-
                         <div class="form-buttons">
                             <button class="submit-btn" type="button">Register</button>
                             <button class="cancel-btn" type="button" onclick="toggleAuthPopup()">Cancel</button>
@@ -231,7 +224,7 @@
                 </div>
             </div>
 
-            <!-- Pop-up Login Warning -->
+            <!-- popup: warning shown if user not logged in -->
             <div id="login-warning" class="popup hidden">
                 <div class="popup-content popup-warning slide-in">
                     <p class="warning-text">Please login first to add a transaction.</p>
@@ -240,7 +233,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 

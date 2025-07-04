@@ -1,30 +1,32 @@
+// ========== STATE ==========
+
+// global state for form inputs
 let previousInputs = {
     income: { amount: '', description: '' },
     expense: { amount: '', description: '' }
 };
 
-let sidebarData = {
-    income: {},
-    expense: {}
-};
-
+// track total and sidebar categories
+let sidebarData = { income: {}, expense: {} };
 let totalIncome = 0;
 let totalExpense = 0;
 
+// transactions list and edit mode
 let transactions = [];
 let editingIndex = null;
 
+// warning popup
 let loginWarning = null;
 let loginWarningBtn = null;
 
 // ========== UI UTILITY ==========
 
+// func: toggle transaction popup, show login warning if not logged in
 function togglePopup() {
     const user = JSON.parse(localStorage.getItem('loggedInUser'));
     const popup = document.getElementById('popup');
 
     if (!user) {
-        // Show login warning popup with animation
         if (loginWarning) {
             loginWarning.classList.remove('hidden');
             loginWarning.classList.add('show');
@@ -39,12 +41,14 @@ function togglePopup() {
     }
 }
 
+// func: toggle auth (login/register) popup
 function toggleAuthPopup() {
     const authPopup = document.getElementById('auth-popup');
     authPopup.classList.toggle('hidden');
     switchAuthTab('login');
 }
 
+// func: switch auth tab content
 function switchAuthTab(tab) {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
@@ -52,6 +56,7 @@ function switchAuthTab(tab) {
     registerForm.classList.toggle('hidden', tab !== 'register');
 }
 
+// func: auto-fill date time field with current local datetime
 function setCurrentDateTime() {
     const now = new Date();
     const offset = now.getTimezoneOffset();
@@ -62,6 +67,7 @@ function setCurrentDateTime() {
     });
 }
 
+// func: reset dropdowns to first option
 function resetCategoryDefault() {
     document.querySelectorAll('select').forEach(select => {
         if (!select.value) {
@@ -70,6 +76,7 @@ function resetCategoryDefault() {
     });
 }
 
+// func: switch between income and expense tab, preserving previous input
 function switchTab(tab) {
     const incomeForm = document.getElementById('income-form');
     const expenseForm = document.getElementById('expense-form');
@@ -79,14 +86,17 @@ function switchTab(tab) {
     const fromForm = tab === 'income' ? expenseForm : incomeForm;
     const toForm = tab === 'income' ? incomeForm : expenseForm;
 
+    // save input from current tab
     previousInputs[tab === 'income' ? 'expense' : 'income'].amount =
         fromForm.querySelector('input[name="amount"]').value;
     previousInputs[tab === 'income' ? 'expense' : 'income'].description =
         fromForm.querySelector('input[name="description"]').value;
 
+    // restore input to selected tab
     toForm.querySelector('input[name="amount"]').value = previousInputs[tab].amount;
     toForm.querySelector('input[name="description"]').value = previousInputs[tab].description;
 
+    // toggle tab UI
     incomeForm.classList.toggle('hidden', tab !== 'income');
     expenseForm.classList.toggle('hidden', tab !== 'expense');
     incomeTab.classList.toggle('active', tab === 'income');
@@ -98,10 +108,12 @@ function switchTab(tab) {
 
 // ========== FORMAT ==========
 
+// func: format number with commas
 function formatNumber(value) {
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+// func: attach input handlers for auto-formatting amount fields
 function setupAmountInput() {
     const inputs = document.querySelectorAll('input[name="amount"]');
     inputs.forEach(input => {
@@ -116,6 +128,7 @@ function setupAmountInput() {
     });
 }
 
+// func: reset form and close popup
 function cancelForm() {
     document.querySelectorAll('.form-tab input, .form-tab select').forEach(input => input.value = '');
     previousInputs.income = { amount: '', description: '' };
@@ -128,6 +141,7 @@ function cancelForm() {
 
 // ========== SIDEBAR & BALANCE ==========
 
+// func: update sidebar category total per type (income/expense)
 function updateSidebar(type, category, amount) {
     const container = document.getElementById(`${type}-list`);
     if (!sidebarData[type][category]) {
@@ -135,6 +149,7 @@ function updateSidebar(type, category, amount) {
     }
     sidebarData[type][category] += amount;
 
+    // re-render sidebar items
     container.innerHTML = '';
     const entries = Object.entries(sidebarData[type]).reverse();
     for (const [cat, total] of entries) {
@@ -155,6 +170,7 @@ function updateSidebar(type, category, amount) {
     }
 }
 
+// func: update balance display based on total income/expense
 function updateBalance() {
     const balance = totalIncome - totalExpense;
     const display = document.getElementById('total-balance');
@@ -164,6 +180,7 @@ function updateBalance() {
 
 // ========== TRANSAKSI ==========
 
+// func: render all transactions to the DOM
 function renderTransactions(transList) {
     const list = document.querySelector('.transaction-list');
     const emptyMessage = document.querySelector('.transaction-empty');
@@ -226,6 +243,9 @@ function renderTransactions(transList) {
     });
 }
 
+// ========== SORTING ==========
+
+// func: apply filters to transaction list (date, type, category)
 function sortTransactions() {
     const dateSort = document.getElementById('filter-date').value;
     const typeSort = document.getElementById('filter-type').value;
@@ -252,6 +272,9 @@ function sortTransactions() {
     renderTransactions(sorted);
 }
 
+// ========== TRANSACTION SUBMIT ==========
+
+// func: handle new or edit transaction submission
 function submitForm(type) {
     const form = document.getElementById(`${type}-form`);
     const datetime = form.querySelector('input[name="datetime"]').value;
@@ -260,6 +283,7 @@ function submitForm(type) {
     const description = form.querySelector('input[name="description"]').value.trim();
     const category = form.querySelector('select').value;
 
+    // validation
     if (!amountRaw && !description) {
         alert("Please fill in amount and description.");
         return;
@@ -275,6 +299,7 @@ function submitForm(type) {
     if (isNaN(amountValue)) return;
 
     if (editingIndex !== null) {
+        // update existing
         const oldTx = transactions[editingIndex];
         if (oldTx.type === 'income') totalIncome -= oldTx.amount;
         else totalExpense -= oldTx.amount;
@@ -287,6 +312,7 @@ function submitForm(type) {
         transactions[editingIndex] = { datetime, amount: amountValue, description, category, type };
         editingIndex = null;
     } else {
+        // new transaction
         const newTx = { datetime, amount: amountValue, description, category, type };
         transactions.push(newTx);
 
@@ -302,6 +328,7 @@ function submitForm(type) {
 
 // ========== AUTH ==========
 
+// func: handle user registration with fetch to /register
 function registerUser() {
     const fullName = document.querySelector('#register-form input[name="fullname"]').value.trim();
     const username = document.querySelector('#register-form input[name="username"]').value.trim();
@@ -341,6 +368,7 @@ function registerUser() {
         .catch(() => alert('Error registering user.'));
 }
 
+// func: handle login and update UI if successful
 function loginUser() {
     const email = document.querySelector('#login-form input[name="email"]').value.trim();
     const password = document.querySelector('#login-form input[name="password"]').value;
@@ -369,11 +397,32 @@ function loginUser() {
         .catch(() => alert('Error during login.'));
 }
 
+// func: logout and reset UI
 function logoutUser() {
+    // Remove logged-in user info
     localStorage.removeItem('loggedInUser');
+
+    // Clear all transaction-related data
+    transactions = [];
+    totalIncome = 0;
+    totalExpense = 0;
+    editingIndex = null;
+
+    // If you're storing transactions in localStorage, also remove them
+    localStorage.removeItem('transactions');
+
+    // Reset sidebar and transaction list UI
+    sidebarData = { income: {}, expense: {} };
+    updateBalance();            // Reset balance display
+    updateSidebar('income');    // Clear income categories
+    updateSidebar('expense');   // Clear expense categories
+    renderTransactions([]);     // Show 'No transactions yet'
+
+    // Update authentication UI (show login/register button)
     updateAuthUI();
 }
 
+// func: update navbar greeting and auth button
 function updateAuthUI() {
     const authBtn = document.getElementById('login-register-btn');
     const greeting = document.getElementById('greeting-container');
@@ -393,6 +442,7 @@ function updateAuthUI() {
     }
 }
 
+// func: hide login warning popup with animation
 function hideLoginWarning() {
     if (loginWarning) {
         loginWarning.classList.remove('show');
@@ -406,6 +456,7 @@ function hideLoginWarning() {
 
 // ========== INIT ==========
 
+// event: on DOM loaded, setup UI and auth
 document.addEventListener('DOMContentLoaded', () => {
     setupAmountInput();
     updateAuthUI();
@@ -413,11 +464,13 @@ document.addEventListener('DOMContentLoaded', () => {
     loginWarning = document.getElementById('login-warning');
     loginWarningBtn = document.getElementById('login-warning-ok');
 
+    // event: submit buttons
     document.querySelector('#income-form .submit-btn').addEventListener('click', () => submitForm('income'));
     document.querySelector('#expense-form .submit-btn').addEventListener('click', () => submitForm('expense'));
     document.querySelector('#register-form .submit-btn').addEventListener('click', registerUser);
     document.querySelector('#login-form .submit-btn').addEventListener('click', loginUser);
 
+    // event: transaction list action (edit/delete)
     document.querySelector('.transaction-list').addEventListener('click', (e) => {
         const parent = e.target.closest('.transaction');
         const index = parseInt(parent?.getAttribute('data-index'));
@@ -446,6 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // event: login warning dismiss
     if (loginWarningBtn) {
         loginWarningBtn.addEventListener('click', () => {
             if (loginWarning) {
